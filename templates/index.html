@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment Classification</title>
+</head>
+<body>
+    <h1>Cyberbullying Comment Classification</h1>
+    <form method="POST">
+        <label for="comment">Enter a Comment:</label>
+        <input type="text" id="comment" name="comment" required>
+        <button type="submit">Classify</button>
+    </form>
+
+    {% if result %}
+    <h2>Results:</h2>
+    <table border="1">
+        <tr>
+            <th>Comment</th>
+            <th>Prediction (Logistic Regression)</th>
+            <th>Prediction (Random Forest)</th>
+        </tr>
+        <tr>
+            <td>{{ result.comment }}</td>
+            <td>{{ result.prediction_lr }}</td>
+            <td>{{ result.prediction_rf }}</td>
+        </tr>
+    </table>
+    {% endif %}
+</body>
+</html>
