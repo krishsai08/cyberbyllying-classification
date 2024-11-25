@@ -4,16 +4,16 @@ import contractions
 import spacy
 from nltk.corpus import stopwords
 from joblib import load
-import os
+from collections import Counter  # For counting predictions
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # Load models and vectorizer using joblib
-vectorizer = load("D:\\project\\logrr_rfc\\models\\vectorizer.joblib")
-lr_model = load("D:\\project\\logrr_rfc\\models\\lr_model.joblib")
-rfc_model = load("D:\\project\\logrr_rfc\\models\\rfc_model.joblib")
-svm_model = load("D:\\project\\logrr_rfc\\models\\svm_model.joblib")  # Load the SVM model
+vectorizer = load("D:\\project\\logistic_reg_randomFC_SVM\\models\\vectorizer.joblib")
+lr_model = load("D:\\project\\logistic_reg_randomFC_SVM\\models\\lr_model.joblib")
+rfc_model = load("D:\\project\\logistic_reg_randomFC_SVM\\models\\rfc_model.joblib")
+svm_model = load("D:\\project\\logistic_reg_randomFC_SVM\\models\\svm_model.joblib")  # Load the SVM model
 
 # Preprocessing function
 def preprocess_comment(comment):
@@ -50,16 +50,21 @@ def predict():
     comment_vector = vectorizer.transform([preprocessed_comment])
 
     # Predict using all models
-    lr_prediction = lr_model.predict(comment_vector)
-    rfc_prediction = rfc_model.predict(comment_vector)
-    svm_prediction = svm_model.predict(comment_vector)
+    lr_prediction = lr_model.predict(comment_vector)[0]  # Get scalar prediction
+    rfc_prediction = rfc_model.predict(comment_vector)[0]
+    svm_prediction = svm_model.predict(comment_vector)[0]
+
+    # Majority voting logic
+    predictions = [lr_prediction, rfc_prediction, svm_prediction]
+    prediction_counts = Counter(predictions)
+    majority_prediction = prediction_counts.most_common(1)[0][0]  # Get the most common prediction
+
+    # Convert numeric prediction to human-readable labels
+    prediction_label = "Cyberbullying" if majority_prediction == 1 else "Not Cyberbullying"
 
     # Prepare the result
     result = {
-        "Logistic Regression": "Cyberbullying" if lr_prediction[0] == 1 else "Not Cyberbullying",
-        "Random Forest": "Cyberbullying" if rfc_prediction[0] == 1 else "Not Cyberbullying",
-        "SVM": "Cyberbullying" if svm_prediction[0] == 1 else "Not Cyberbullying",
-        "Preprocessed Comment": preprocessed_comment,
+        "Majority Prediction": prediction_label,
     }
     
     print(f"Result: {result}")  # Debugging line
