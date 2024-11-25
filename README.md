@@ -9,6 +9,8 @@ This project is a web-based application designed to classify comments into two c
   - Logistic Regression
   - Random Forest Classifier
   - Support Vector MAchines
+  - RNN
+  - LSTM
 - **Interactive Web Interface**: Users can input a comment, and the application predicts whether the comment is cyberbullying.
 - **Real-time Predictions**: Powered by Flask, predictions are returned instantly upon submission.
 
